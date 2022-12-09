@@ -1,0 +1,4 @@
+Error: listen EADDRINUSE: address already 에러
+
+sudo lsof -i :8080
+sudo kill -9 pid값
