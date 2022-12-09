@@ -318,7 +318,7 @@ app.get('/chat', 로그인했니, function(요청, 응답){
     // 요청.user._id(현재 세션 login 컬렉션의 _id 와 같은 chatroom)
     db.collection('chatroom').find({ member : 요청.user._id }).toArray().then((결과)=>{
         console.log('chat/ 결과[0]', 결과[0]);    
-        응답.render('chat.ejs', {data : 결과})
+        응답.render('chat.ejs', {data : 결과, user : 요청})
         // 결국, data.member 는 요청.user._id 와 동일한 값을 갖는다.
     })
 }); 
@@ -335,3 +335,37 @@ app.post('/message', 로그인했니, function(요청, 응답){
         응답.send('채팅 저장할거 DB 저장 성공')
     })
 });
+
+app.get('/aggre', (req, res)=>{
+    // db.collection('post').find().toArray().then((결과)=>{
+    //     console.log('애그리게이션. 룩업. 아우터 조인')
+    //find() 대신---> aggregate()사용
+   db.collection('post').aggregate([
+        // { $addFields: { username: "$작성자" } },
+        {
+          $lookup: {
+            from: "login", // 조인할 컬렉션
+            localField: "작성자", // 현재 post컬렉션에서 비교할 key값
+            foreignField: "_id", // 조인할 컬렉션에서 비교할 키값
+            as: "postInfo",
+          },
+        },
+        { $unwind: "$postInfo" }, // [{}]배열 분리postInfo[0].username->
+        // {
+        //   $project: { // 조인 데이터중 필요한 필드만 사용시.
+        //     product_id: 1,
+        //     description: 1,
+        //     title: "$productInfo.title",
+        //     category: "$productInfo.category",
+        //   },
+        // },
+      ]).toArray().then((result)=>{
+        res.render('aggre.ejs', {posts: result, user: req.user})
+        console.log(result)
+        // .toArray((error, data)=>{
+        //     if (error) {console.log(error)}
+        //     res.render('list.ejs', {posts: data, user: req.user})
+      })
+      
+      });
+

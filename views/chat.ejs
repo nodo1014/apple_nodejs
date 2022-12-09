@@ -15,22 +15,25 @@
 <div class="container p-4 detail">
 
     <div class="row">
+
       <div class="col-3">
-        <h4>chatroom컬렉.find({member: 요청.user._id})</h6>
+        <h4>내가 포함된 chatroom컬렉션</h6>
         <p>member에 나(요청.user._id)가 있는 chatroom</p>
         <ul class="list-group chat-list">
           <% for (let i=0; i < data.length ; i++) { %>
-          <li class="list-group-item" data-id="<%data[i].title%>">
-            <h6><%=i%> title: <%= data[i].title %></h6>
-            <h6 class="text-small">date: <%= data[i].date %></h6>
+          <li class="list-group-item" data-id="<%data[i]._id%>">
+            <h6><%=i+1 %>. <%= data[i].title %></h6>
+            <h6 class="text-small">_id(parent): <%= data[i]._id %></h6>
           </li>
           <% } %>
          </ul>
        </div>
+
        <div class="col-9 p-0">
          <div class="chat-room">
+          <h1>/chat.ejs</h1>
+          <h2><%=user.id%></h2>
           <h4>현재 접속한 나는 누구? <%= data[0].member[1] %></h4>
-          <p>data[0].member[1]</p>
           <ul class="list-group chat-list">
 
             <% for (let i=0; i < data.length ; i++){ %>
@@ -56,12 +59,14 @@
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
 <script>
-  var 지금누른채팅방id; // 함수 내 사용 위해서, 변수를 밖에 선언
+  // TODO: 전송 클릭시 동작.1) 서버로 게시물 전송
+  // - 부모 게시글이 먼가? 왼쪽 채팅방이 부모.(클릭하면 전달)
+  //1
+  var 지금누른채팅방id;
   $('.list-group-item').click(function(){
     지금누른채팅방id = this.dataset.id;
   })
-  // TODO: 전송 클릭시 동작.1) 서버로 게시물 전송
-  // - 부모 게시글이 먼가? 왼쪽 채팅방이 부모.(클릭하면 전달)
+  //2
   $('#send').click(function(){
     var 채팅내용 = $('#chat-input').val();
     var 보낼거 = {
@@ -69,7 +74,7 @@
       content : 채팅내용,
     };
 
-    //3
+    //3 message 에 저장하라고, 서버에 post요청. $.post
     $.post('/message', 보낼거).then((a)=>{
       console.log(a)
     });
@@ -80,6 +85,7 @@ var 지금누른채팅방id;
 $('.list-group-item').click(function (){
    $(this).css('background-color', '#eee');
    지금누른채팅방id = $(this).attr('data-id');
+   console.log(지금누른채팅방id);
 });
   
 </script>
