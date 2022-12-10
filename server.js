@@ -96,7 +96,7 @@ MongoClient.connect(process.env.DB_URL, (error, client) => {
     });
 
     // list
-    // findeOne(조건, (e, d)=>{})
+    // findOne(조건, (e, d)=>{})
     // find().toArray(e, d)=>{res.render};
     //FIXME: skip((page-1)*2) -> 최신순으로 한 페이지당 2개씩
     //TODO: page: 전체 페이지수, page10 - 1 이면 9 page 출력. * 2는 한페이지당 레코드(글)수. skip 은 생략할 데이터 수.
@@ -112,9 +112,9 @@ MongoClient.connect(process.env.DB_URL, (error, client) => {
   
     // detail/1 로 접속시,
     app.get('/detail/:id', (req, res)=>{
-        db.collection('post').findOne({_id : parseInt(req.params.id)}, (error, query)=>{
-            console.log("detail/:id->params.id로 조회한 값", query);
-            res.render('detail.ejs', {posts: query}); // data에 담아서 render
+        db.collection('post').findOne({_id : parseInt(req.params.id)}, (error, result)=>{
+            console.log("detail/:id->params.id로 조회한 값", result);
+            res.render('detail.ejs', {posts: result}); // data에 담아서 render
         })
     });
     app.get('/login',(req, res)=>{
@@ -184,7 +184,7 @@ passport.use(new LocalStrategy({
         done(null, result)
     })
   });
-  
+// 유일하게 get방식 query 사용
   app.get('/search', (req, res)=>{
       console.log(req.query); // list 에서 전송받은 검색어 req.query
     // 전부 다 검색 -> index 사용으로 변경
@@ -395,5 +395,4 @@ app.get('/message/:parentid', 로그인했니, function(요청, 응답){
       var 추가된문서 = [result.fullDocument];
       응답.write(`data: ${JSON.stringify(추가된문서)}\n\n`);
     });
-  
   });
