@@ -55,21 +55,23 @@
   // - 부모 게시글이 먼가? 왼쪽 채팅방이 부모.(클릭하면 전달)
   //1 채팅방 id 추출
   var 지금누른채팅방id;
-  var eventSource;
-  $('.list-group-item').click(function(){
-    지금누른채팅방id = this.dataset.id;
+var eventSource; 
 
-    if (eventSource != undefined){
-      eventSource.close()
-    }
+$('.list-group-item').click(function(){
+  지금누른채팅방id = this.dataset.id;
+  $('.chat-content').html('') //일단 메세지들 전부 비우기
 
-    // 서버가 보낸 데이터 수신하고 싶으면? addEventListener
-    eventSource = new EventSource('/message/' + 지금누른채팅방id); //:id -> params.id
-    eventSource.addEventListener('test', function(e){
-      console.log(JSON.parse(e.data));
+  eventSource = new EventSource('/message/' + 지금누른채팅방id);
+  eventSource.addEventListener('test', function (e){
+    console.log(e.data);
 
+    var 가져온거 = JSON.parse(e.data);
+    가져온거.forEach((a) => {
+        $('.chat-content').append(`<li><span class="chat-box">${a.content}</span></li>`)
     });
   });
+
+});
   //2-1 메세지 전송 클릭
   $('#send').click(function(){
     var 채팅내용 = $('#chat-input').val();
@@ -84,14 +86,8 @@
     });
   });
 //4
-var 지금누른채팅방id;
 
-$('.list-group-item').click(function (){
-   $(this).css('background-color', '#eee');
-   지금누른채팅방id = $(this).attr('data-id');
-   console.log(지금누른채팅방id);
-});
-  
+
 </script>
 
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

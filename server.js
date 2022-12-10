@@ -369,20 +369,31 @@ app.get('/aggre', (req, res)=>{
       
       });
 // FIXME: 채팅방 클릭->방 _id 를 url 로 전달. --> req.params.id 로 받기
-app.get('/message/:id', 로그인했니, (요청, 응답)=>{
-// FIXME: 유저와 실시간 소통 채널 구축
+app.get('/message/:parentid', 로그인했니, function(요청, 응답){
+
     응답.writeHead(200, {
-        "Connection" : "keep-alive",
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
+      "Connection": "keep-alive",
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
     });
-        db.collection('message').find({parent : 요청.params.id}).toArray().then((결과)=>{
-            console.log('message 컬렉션', 결과);
-            응답.write('event: test\n');
-//TODO: 실시간 전송시, 문자자료로 바꿔서 전송. (객체 X).
-// 따옴표 친 JSON->JSON.parse(e.data)
-            // 응답.write('data: '+JSON.stringify(결과)+'\n\n'); 
-            응답.write(`data: ${JSON.stringify(결과)}\n\n`);
-            응답.end('전송끝')
-        });
-});
+  
+    db.collection('message').find({ parent: 요청.params.parentid }).toArray()
+    .then((결과)=>{
+      console.log(결과);
+      응답.write('event: test\n');
+      응답.write(`data: ${JSON.stringify(결과)}\n\n`);
+    });
+  
+  
+    const 찾을문서 = [
+      { $match: { 'fullDocument.parent': 요청.params.parentid } }
+    ];
+  
+    const changeStream = db.collection('message').watch(찾을문서);
+    changeStream.on('change', result => {
+      console.log(result.fullDocument);
+      var 추가된문서 = [result.fullDocument];
+      응답.write(`data: ${JSON.stringify(추가된문서)}\n\n`);
+    });
+  
+  });
