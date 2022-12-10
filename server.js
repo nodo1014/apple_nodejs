@@ -132,7 +132,7 @@ app.get('/mypage', 로그인했니, (req, res)=>{
     //TODO: mypage 커스텀
     db.collection('post').find({작성자:req.user._id}).toArray((error, data)=>{
         if (error) {console.log(error)}
-        console.log('mypage_내가 쓴 글은? ', data);
+        // console.log('mypage_내가 쓴 글은? ', data);
         res.render('mypage.ejs', {user: req.user, posts: data})
     })
 });
@@ -317,7 +317,7 @@ app.get('/chat', 로그인했니, function(요청, 응답){
     //TODO: chatroom { member: Array {0:ObjectId(), 1:_____}}
     // 요청.user._id(현재 세션 login 컬렉션의 _id 와 같은 chatroom)
     db.collection('chatroom').find({ member : 요청.user._id }).toArray().then((결과)=>{
-        console.log('chat/ 결과[0]', 결과[0]);    
+        // console.log('chat/ 결과[0]', 결과[0]);    
         응답.render('chat.ejs', {data : 결과, user : 요청})
         // 결국, data.member 는 요청.user._id 와 동일한 값을 갖는다.
     })
@@ -332,7 +332,7 @@ app.post('/message', 로그인했니, function(요청, 응답){
     }
     db.collection('message').insertOne(저장할거).then(()=>{
         console.log('성공');
-        응답.send('채팅 저장할거 DB 저장 성공')
+        응답.send('응답.send::채팅 저장할거 DB 저장 성공')
     })
 });
 
@@ -368,4 +368,21 @@ app.get('/aggre', (req, res)=>{
       })
       
       });
-
+// FIXME: 채팅방 클릭->방 _id 를 url 로 전달. --> req.params.id 로 받기
+app.get('/message/:id', 로그인했니, (요청, 응답)=>{
+// FIXME: 유저와 실시간 소통 채널 구축
+    응답.writeHead(200, {
+        "Connection" : "keep-alive",
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+    });
+        db.collection('message').find({parent : 요청.params.id}).toArray().then((결과)=>{
+            console.log('message 컬렉션', 결과);
+            응답.write('event: test\n');
+//TODO: 실시간 전송시, 문자자료로 바꿔서 전송. (객체 X).
+// 따옴표 친 JSON->JSON.parse(e.data)
+            // 응답.write('data: '+JSON.stringify(결과)+'\n\n'); 
+            응답.write(`data: ${JSON.stringify(결과)}\n\n`);
+            응답.end('전송끝')
+        });
+});
