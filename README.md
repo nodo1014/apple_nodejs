@@ -1,2 +1,2 @@
 
-# apple_nodejs
+# .env DB 설정 별도
