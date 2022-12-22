@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>노마드 react</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+
+    function Btn({name, color, bool, onClick}){ //onClick 은 prop일 뿐
+      console.log(name, "렌더링 됐습니다. :props.name 렌더링 언제?")
+      // console.log({name}); // {name: 'banana'}
+      // console.log({color});
+      // console.log(bool); // false
+      // console.log({bool}); // {bool: false}
+      // console.log('return 다음은 jsx 문법이므로, 변수 사용시 {} ')
+      // console.log('프롭스로 전달된 onClick={func}은?',onClick);
+      return (<button
+      onClick={onClick} //여기 onClick 은 이벤트리스너
+        style = {{
+          fontSize: bool ? 18 : 10,
+          backgroundColor: color,
+          color:"white",
+          padding: "10px 20px",
+          border: 0,
+          borderRadius:10,
+        }}>{name}
+        </button>
+        );
+    }
+
+    const 메모Btn = React.memo(Btn); // TODO: memo(Btn)::: Btn 대신 MemorizedBtn
+
+    function App() {
+      const [value, setValue] = React.useState("save changed");
+      const changeValue = () =>setValue("revert changed"); //onClick 함수
+      return (
+        <div>
+          <메모Btn name={value} color="tomato" bool={true} onClick={changeValue}
+          //bool값은 {}로 전달
+          //onClick 은 모양은 같지만, 이벤트리스너가 아니라, 단순 html 이다. props 에  키로 전달
+          />
+          <메모Btn name="핑크버튼:continue" color="hotpink" bool={false} />
+        </div>
+      );
+    }
+    const root = document.getElementById('root');
+    console.log(root);
+    ReactDOM.render(<App />, root);
+  </script>
+</html>
