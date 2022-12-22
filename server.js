@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 // Express 4.16 이상은 body-parser포함
 app.use(express.json());
+// react 사용하기
+const cors = require("cors");
+app.use(cors());
+
 app.use(express.urlencoded({extended: false}));
 const MongoClient = require('mongodb').MongoClient;
 app.set('view engine', 'ejs'); // res.render('list.ejs')
@@ -43,9 +47,9 @@ var storage = multer.diskStorage({
   }
 })
 
-var path = require('path');
+const path = require('path');
 // storage 설정변수
-var upload = multer({storage:storage});
+const upload = multer({storage:storage});
 // FIXME: 업로드 제한 설정: 필드오류가 생겼었다...2022/12/08 (목)-04:02
 // var upload = multer({
 //     storage: storage,
@@ -88,6 +92,19 @@ MongoClient.connect(process.env.DB_URL, (error, client) => {
             console.log('listening on 8080');
         });
     });
+
+//TODO: 리액트로 만든 html 사용하기
+// 리액트 라우터 사용
+
+app.use(express.static(__dirname + 'nomad_movie/build'));
+app.get('/nomad', (req, res)=>{
+res.sendFile(path.join(__dirname, "nomad_movie/index.html"));
+})
+//FIXME:: 리액트 파일에서 상품데이터 필요하면 /product로 GET 요청
+app.get('/product', (req, res)=>{
+    res.json({name : 'black shoes'})
+});
+
 
     app.get('/', (req, res)=>{
         // res.sendFile(__dirname+'/index.html')
@@ -395,4 +412,9 @@ app.get('/message/:parentid', 로그인했니, function(요청, 응답){
       var 추가된문서 = [result.fullDocument];
       응답.write(`data: ${JSON.stringify(추가된문서)}\n\n`);
     });
+  });
+
+
+  app.get("*", function (req, res) {
+    res.sendFile(path.join(__dirname, "nomad_movie/build/index.html"));
   });
