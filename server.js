@@ -1,11 +1,9 @@
 const express = require('express');
 const app = express();
-// Express 4.16 이상은 body-parser포함
 app.use(express.json());
 // react 사용하기
 const cors = require("cors");
 app.use(cors());
-
 app.use(express.urlencoded({extended: false}));
 const MongoClient = require('mongodb').MongoClient;
 app.set('view engine', 'ejs'); // res.render('list.ejs')
@@ -75,8 +73,6 @@ app.post('/upload', upload.single('up_field'), function(요청, 응답){
 app.get('/image/:imageName', function(요청, 응답){
 응답.sendFile( __dirname + '/public/image/' + 요청.params.imageName )
 })
-
-
 // var db;
 let db; // 페이지 전체에서 쓸 수 있는 전역 변수
 MongoClient.connect(process.env.DB_URL, (error, client) => {
@@ -93,17 +89,7 @@ MongoClient.connect(process.env.DB_URL, (error, client) => {
         });
     });
 
-//TODO: 리액트로 만든 html 사용하기
-// 리액트 라우터 사용
 
-app.use(express.static(__dirname + 'nomad_movie/build'));
-app.get('/nomad', (req, res)=>{
-res.sendFile(path.join(__dirname, "nomad_movie/index.html"));
-})
-//FIXME:: 리액트 파일에서 상품데이터 필요하면 /product로 GET 요청
-app.get('/product', (req, res)=>{
-    res.json({name : 'black shoes'})
-});
 
 
     app.get('/', (req, res)=>{
@@ -415,6 +401,23 @@ app.get('/message/:parentid', 로그인했니, function(요청, 응답){
   });
 
 
+  //TODO: 리액트로 만든 html 사용하기
+// 리액트 라우터 사용
+app.use(express.static(path.join(__dirname, 'nomad_movie/build')));
+console.log(path.join(__dirname, 'nomad_movie/build'));
+// app.use(express.static(path.join(__dirname, "react-project/build")));
+app.get("/build", (req, res) => {
+  res.sendFile(path.join(__dirname, "/nomad_movie/build/index.html"));
+})
+// App.js 이전, react 스크립트로 만든 index.html
+app.get('/nomad', (req, res)=>{
+res.sendFile(path.join(__dirname, "/nomad_movie/index.html"));
+})
+//FIXME:: 리액트 파일에서 상품데이터 필요하면 /product로 GET 요청
+app.get('/product', (req, res)=>{
+    res.json({name : 'black shoes'})
+});
+// 리액트 라우터 이용. 가장 아래
   app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "nomad_movie/build/index.html"));
   });

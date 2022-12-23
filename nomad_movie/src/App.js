@@ -26,9 +26,15 @@ function App() {
       <Route path="/blog">
         <Blog />
       </Route>
-      <Route path="/">
+      <Route path="/movie_home">
         <Home />
       </Route>
+      <Route path="/">
+        <h1>'/' 은 젤  아로 보내라고.</h1>
+        <Home />
+      </Route>
+
+
     </Switch>
   </Router>;
 
