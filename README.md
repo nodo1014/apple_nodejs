@@ -2,8 +2,10 @@
 # apple_nodejs
 
 # .env
+```
 DB_URL = mongodb+srv://아이디:비번@cluster0.4xfvd85.mongodb.net/shop
 PORT = 8080
+```
 # 몽구스 사용X 몽고클라이언트 접속.
 ```javascript
 let db; // 페이지 전체에서 쓸 수 있는 전역 변수
@@ -16,6 +18,7 @@ MongoClient.connect(process.env.DB_URL, (error, client) => {
         });
     });
 ```
+
 # 몽고 db 조작
 ```
 // 1-2 DB 조작. collection=테이블
@@ -24,7 +27,10 @@ MongoClient.connect(process.env.DB_URL, (error, client) => {
 // });
 // 0. 서버 가동
 ```
+# 에러처리
+```
 Error: listen EADDRINUSE: address already 에러
 
 sudo lsof -i :8080
 sudo kill -9 pid값
+```
