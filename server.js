@@ -23,15 +23,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 // process.env.DB_URL / PORT
 require('dotenv').config()
-// TODO: routes : 미들웨어. 전역으로 사용. ** app.get('/', 미들펑션, (req, res)=>{})
- //FIXME: shop에 라우트를 모음->미들웨어 easy-> 로그인했니 같은 함수
  app.use('/shop', require('./routes/shop.js') );
  app.use('/board/sub', require('./routes/board.js'));
  //routes export + const router = require('express').Router(); 
 const router = express.Router();
-//FIXME: 2022/12/08 (목)-05:50  
 const multer = require('multer');
-//FIXME: 2022/12/08 (목)-09:50
 const { ObjectId } = require('mongodb');
 // const ObjectId = require('mongodb').ObjectId;
 // 설정변수
